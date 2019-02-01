@@ -1,0 +1,11 @@
+all:
+   children:
+     cloudlab:
+       hosts:
+         ctrl1.cloudlab.telenor.dk:
+         ctrl2.cloudlab.telenor.dk:
+         ctrl3.cloudlab.telenor.dk:
+     testlab:
+       hosts:
+         kvm1-j3484.testlab.telenor.dk:
+

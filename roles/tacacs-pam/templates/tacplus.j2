@@ -1,0 +1,16 @@
+Name: Tacacs+ authentication
+Default: yes
+Priority: 255
+Auth-Type: Primary
+Auth:
+     sufficient /lib/security/pam_tacplus.so{% for server in tacacs_servers %} server={{ server }}:{{ tacacs_port }}{% endfor %} secret={{tacacs_secret}} try_first_pass
+Account-Type: Primary
+Account:
+     sufficient /lib/security/pam_tacplus.so secret={{tacacs_secret}} try_first_pass service=shell protocol=ssh
+Session-Type: Additional
+Session:
+     sufficient /lib/security/pam_tacplus.so{% for server in tacacs_servers %} server={{ server }}:{{ tacacs_port }}{% endfor %} secret={{tacacs_secret}} service=shell protocol=ssh
+                                                          
+
+
+

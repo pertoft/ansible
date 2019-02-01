@@ -1,0 +1,13 @@
+---
+tacacs_servers:
+ - 172.29.160.50 
+ - 172.29.160.51  
+tacacs_port: 55
+tacacs_secret: default 
+
+packages:
+  - libpam-tacplus 
+permissions_other_read:
+  - /etc/pam.d/
+  - /usr/share/pam-configs/tacplus
+
