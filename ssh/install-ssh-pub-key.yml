@@ -1,0 +1,12 @@
+# Install ssh public key on hosts
+# ansible-playbook ssh/install-ssh-pub-key.yml  -k
+# 
+--- 
+- hosts: all
+  become: true
+  tasks:
+  - name: Set authorized key taken from file
+    authorized_key:
+      user: pto
+      state: present
+      key: "{{ lookup('file', '/home/pto/.ssh/id_rsa.pub') }}"

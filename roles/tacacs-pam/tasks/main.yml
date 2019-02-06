@@ -1,0 +1,27 @@
+---
+- name: Install base packages
+  apt: name={{ item }} state=installed update_cache=yes
+  with_items: "{{ packages }}"
+
+- name: Set permissions other read
+  file: 
+    dest: "{{ item }}"
+    owner: root 
+    group: root 
+    mode: u=rw,g=r,o=r
+  with_items: "{{ permissions_other_read }}"
+
+- name: Configure pam configuration file
+  template:
+    src: templates/tacplus.j2
+    dest: /usr/share/pam-configs/tacplus
+    owner: root
+    group: root
+    mode: 0644
+
+- name: update pam on Debian systems
+  command: 'pam-auth-update --package'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  changed_when: False
+  environment:
+    DEBIAN_FRONTEND: noninteractive

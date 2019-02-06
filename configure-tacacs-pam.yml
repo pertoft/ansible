@@ -1,0 +1,8 @@
+---
+# >ansible-playbook configure-tacacs-pam.yml --limit cloudlab  --ask-vault-pass -e tacacs_secret=123456
+- name: Configure PAM with tacacs support
+  hosts: all
+  become: yes
+
+  roles:
+   - tacacs-pam
