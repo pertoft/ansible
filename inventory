@@ -5,6 +5,7 @@ all:
          ctrl1.cloudlab.telenor.dk:
          ctrl2.cloudlab.telenor.dk:
          ctrl3.cloudlab.telenor.dk:
+<<<<<<< HEAD
      cloudlab-compute:
         hosts:
           compute001: 
@@ -107,3 +108,9 @@ all:
            net_tun: 192.168.16.103
            net_storage: 192.168.32.103
            net_ext: 10.207.134.106
+=======
+     testlab:
+       hosts:
+         kvm1-j3484.testlab.telenor.dk:
+
+>>>>>>> c569c5a4579a8a5dcf44fbe484546303e240dedc
