@@ -5,7 +5,105 @@ all:
          ctrl1.cloudlab.telenor.dk:
          ctrl2.cloudlab.telenor.dk:
          ctrl3.cloudlab.telenor.dk:
+     cloudlab-compute:
+        hosts:
+          compute001: 
+             ansible_host: 10.207.134.11
+          controller001:
+             ansible_host: 10.207.134.20
+          controller002:
+             ansible_host: 10.207.134.21
+          controller003:
+             ansible_host: 10.207.134.22
      testlab:
        hosts:
          kvm1-j3484.testlab.telenor.dk:
+     ubuntu:
+       hosts:
+         netdev1.ip.telenor.dk:
 
+     cloudlab-controller:
+       vars:
+         ansible_user: ubuntu
+       hosts:
+         ctrl1:
+           ansible_host: 10.207.134.101
+         ctrl2:
+           ansible_host: 10.207.134.102
+         ctrl3:
+           ansible_host: 10.207.134.103
+         controller001:
+           ansible_host: 10.207.134.104
+         controller002:
+           ansible_host: 10.207.134.105
+         controller003:
+           ansible_host: 10.207.134.106
+
+
+     cloudlab-hp:
+       vars:
+         ansible_user: ubuntu
+       hosts:
+         compute001:
+           ansible_host: 10.207.134.126
+           net_mgmt: 192.168.0.51
+           net_tun: 192.168.16.51
+           net_storage: 192.168.32.51
+         compute002:
+           ansible_host: 10.207.134.117
+           net_mgmt: 192.168.0.52
+           net_tun: 192.168.16.52
+           net_storage: 192.168.32.52
+         compute003:
+           ansible_host: 10.207.134.119
+           net_mgmt: 192.168.0.53
+           net_tun: 192.168.16.53
+           net_storage: 192.168.32.53
+         compute004:
+           ansible_host: 10.207.134.118
+           net_mgmt: 192.168.0.54
+           net_tun: 192.168.16.54
+           net_storage: 192.168.32.54
+         compute005:
+           ansible_host: 10.207.134.123
+           net_mgmt: 192.168.0.55
+           net_tun: 192.168.16.55
+           net_storage: 192.168.32.55
+         compute006:
+           ansible_host: 10.207.134.120
+           net_mgmt: 192.168.0.56
+           net_tun: 192.168.16.56
+           net_storage: 192.168.32.56
+         compute007:
+           ansible_host: 10.207.134.124
+           net_mgmt: 192.168.0.57
+           net_tun: 192.168.16.57
+           net_storage: 192.168.32.57
+         compute008:
+           ansible_host: 10.207.134.125
+           net_mgmt: 192.168.0.58
+           net_tun: 192.168.16.58
+           net_storage: 192.168.32.58
+         compute009:
+           ansible_host: 10.207.134.112
+           net_mgmt: 192.168.0.59
+           net_tun: 192.168.16.59
+           net_storage: 192.168.32.59
+         controller001:
+           ansible_host: 10.207.134.121
+           net_mgmt: 192.168.0.101
+           net_tun: 192.168.16.101
+           net_storage: 192.168.32.101
+           net_ext: 10.207.134.104
+         controller002:
+           ansible_host: 10.207.134.116
+           net_mgmt: 192.168.0.102
+           net_tun: 192.168.16.102
+           net_storage: 192.168.32.102
+           net_ext: 10.207.134.105
+         controller003:
+           ansible_host: 10.207.134.122
+           net_mgmt: 192.168.0.103
+           net_tun: 192.168.16.103
+           net_storage: 192.168.32.103
+           net_ext: 10.207.134.106

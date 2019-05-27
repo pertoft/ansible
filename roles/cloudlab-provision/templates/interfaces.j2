@@ -1,0 +1,91 @@
+#Ansible managed
+auto lo
+iface lo inet loopback
+  dns-search cloudlab.telenor.dk 
+  dns-nameservers: 172.20.0.20 172.20.0.21
+  dns-nameservers: 172.20.0.20 172.20.0.21 
+
+
+### Physical interfaces
+auto eno1
+iface eno1 inet manual
+
+auto eno2
+iface eno2 inet manual
+
+###VLAN Definitions
+
+#External Management
+auto eno1.20
+iface eno1.20 inet manual
+    vlan-raw-device eno1
+
+#Internal Management
+auto eno1.21
+iface eno1.21 inet manual
+    vlan-raw-device eno1
+
+#Storage
+auto eno2.22
+iface eno2.22 inet manual
+    vlan-raw-device eno2
+
+#VXLAN 
+auto eno1.23
+iface eno1.23 inet manual
+    vlan-raw-device eno1
+
+
+{% if net_ext is defined %}
+#External Management
+auto br-ext-mgmt
+iface br-ext-mgmt inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eno1.20
+    address {{net_ext}}/24
+    gateway 10.207.134.1
+    post-up route add -net 172.16.0.0 netmask 255.240.0.0  gw 10.207.134.1 metric 10 dev br-ext-mgmt || true
+    pre-down route del -net 172.16.0.0 netmask 255.240.0.0  gw 10.207.134.1 metric 10 dev br-ext-mgmt || true
+{% endif %}
+
+# Container/Host management bridge
+auto br-mgmt
+iface br-mgmt inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eno1.21
+    address {{net_mgmt}}/20
+{% if not net_ext is defined %}
+    gateway 192.168.0.1
+{% endif %}
+
+auto br-storage
+iface br-storage inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eno2.22
+    address {{net_storage}}/20
+
+
+# VXLAN (tunnel/overlay) bridge config
+auto br-vxlan
+iface br-vxlan inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eno1.23
+    address {{net_tun}}/20
+
+
+# OpenStack Networking VLAN bridge
+auto br-vlan
+iface br-vlan inet manual
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eno1
+source /etc/network/interfaces.d/*.cfg

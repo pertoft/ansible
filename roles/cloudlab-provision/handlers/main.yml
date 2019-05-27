@@ -1,0 +1,10 @@
+---
+# handlers file for cloudlab-provision
+- name: restart_sshd
+  service:
+    name: sshd
+    state: restarted
+- name: restart_chrony
+  service:
+    name: chrony
+    state: restarted

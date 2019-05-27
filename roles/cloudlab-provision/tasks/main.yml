@@ -1,0 +1,58 @@
+---
+- name: Install base packages
+  apt: name={{ item }} state=installed update_cache=yes
+  with_items: "{{ packages }}"
+
+- name: Add the user 'pto' with sudo membership 
+  user:
+    name: pto
+    comment: Per Toft
+    group: sudo
+    password: $6$62wFHWMJ$/9jEmvZw6Kj4shBhmsy.ysAUnwOy/vLHxgY3XxoMq8yConET/O/ozSCe7xcyjUMkODsT8gqu4sga3mD0wTRnx0
+    shell: /bin/bash
+- name: Deploy SSH Key
+  authorized_key: 
+      user=pto
+      key="{{ lookup('file', '/home/pto/.ssh/id_rsa.pub') }}"
+      state=present
+
+- name: update sshd config
+  lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PasswordAuthentication.*no'
+      line: 'PasswordAuthentication=yes'
+  notify: restart_sshd
+
+- name: Configure network interfaces
+  template:
+    src: templates/interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  tags: config
+- name: Delete /etc/network/interfaces.d/50-cloud-init.cfg
+  file:
+    state: absent
+    path: "/etc/network/interfaces.d/50-cloud-init.cfg"
+
+- name: update modules
+  lineinfile:
+      path: /etc/modules
+      regexp: '{{item.name}}'
+      line: '{{item.name}}'
+  with_items:
+    - { name: 'bonding'}
+    - { name: '8021q'}
+
+- name: Configure chrony 
+  template:
+    src: templates/chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_chrony
+
+
+

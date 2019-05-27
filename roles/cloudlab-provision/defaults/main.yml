@@ -1,0 +1,19 @@
+---
+# defaults file for cloudlab-provision
+
+ansible_user: ubuntu
+ansible_python_interpreter: /usr/bin/python3
+
+packages:
+ - bridge-utils 
+ - debootstrap 
+ - ifenslave 
+ - ifenslave-2.6 
+ - lsof 
+ - lvm2 
+ - chrony 
+ - openssh-server 
+ - sudo 
+ - tcpdump 
+ - vlan
+ - lldpd

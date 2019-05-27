@@ -1,0 +1,8 @@
+---
+# >ansible-playbook cloudlab-provision.yml --limit cloudlab  --ask-vault-pass 
+- name: Cloudlab basic provision
+  hosts: cloudlab-hp
+  become: yes
+
+  roles:
+   - cloudlab-provision

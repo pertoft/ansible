@@ -1,0 +1,33 @@
+---
+- name: install zabbix agent
+  hosts: cloudlab-controller
+  become: yes
+
+  tasks:
+   - name: download zabbix repo
+     get_url:
+       url:  https://repo.zabbix.com/zabbix/4.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.0-2+xenial_all.deb
+       dest: /tmp/zabbix.deb
+       mode: 0440
+   - name: install zabbix repo package
+     apt: 
+       deb: /tmp/zabbix.deb
+   - name: Install a list of packages
+     apt:
+       name: "{{ packages }}"
+       update_cache: yes
+     vars:
+       packages:
+       - zabbix-agent
+   - name: generate zabbix_agentd.conf
+     template:
+       src: ./zabbix_agentd.conf.j2
+       dest: /etc/zabbix/zabbix_agentd.conf
+     tags: config
+   - name: restart zabbix agent
+     systemd:
+       state: restarted
+       daemon_reload: yes
+       name: zabbix-agent
+     tags: config
+

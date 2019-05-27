@@ -1,7 +1,7 @@
 ---
 tacacs_servers:
- - 172.29.160.50
- - 172.29.160.51
-tacacs_port: 55
+ - 192.168.0.10
+ - 192.168.0.11
+tacacs_port: 53
 tacacs_secret: default
 
