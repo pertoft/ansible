@@ -1,0 +1,217 @@
+### Inventory
+#Inventory plugins
+https://docs.ansible.com/ansible/latest/plugins/inventory.html
+https://docs.ansible.com/ansible/latest/plugins/inventory.html
+
+#Inventory commands
+ansible-inventory --yaml -i origin_inventory --list --output destination_inventory.yml
+
+### Variables
+
+# Special vars:
+ansible_connection
+ansible_host
+ansible_port
+ansible_user
+ansible_become_user
+ansible_python_interpreter
+ansible_user_id
+
+#Host identifcation
+inventory_hostname
+ansible_host
+ansible_facts['hostname']
+ansible_facts['fqdn']
+ansible_facts['domain']
+ansible_facts['dns']['nameservers']
+ansible_facts['all_ipv4_addresses']
+ansible_facts['all_ipv6_addresses']
+
+
+
+
+###Roles
+
+import_role # ansible-playbook command starts by parsing and inserting the role in the play before starting the execution. Detects and reports syntax errors immediately and does not start the playbook execution.
+include_role # parses and inserts the role in the play when it reaches the include_role task. detects syntax errors in the role, then execution of the playbook is aborted.
+
+pre_tasks # runs before the roles section.
+post_tasks #  runs after the tasks section and any handlers notified by tasks.
+
+meta: flush_handlers 
+
+
+#Handlers
+  tasks:
+    - debug:
+        msg: Test
+      notify: My handler
+      changed_when: true
+  handlers:
+    - name: My handler
+      debug:
+        msg: Handler triggered
+      listen: My handler
+      
+### Performance optimizing
+
+ansible.cfg:
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s
+
+[ssh_connection]
+pipelining = True
+
+# visudo
+Defaults !requiretty
+
+
+#Profiling
+
+[defaults]
+inventory=inventory
+remote_user=devops
+callback_whitelist=timer, profile_tasks, cgroup_perf_recap
+
+ansible-doc -t callback -l
+
+#CPU/RAM whitelist cgroup_perf_recap
+
+
+### YAML
+string_with_breaks: |
+  abc
+  def
+
+string_without_breaks: >
+  abc
+  def
+ 
+Datatypes:
+Date# 
+2019-07-01 #ISO-8601 
+2019-07-01T23:12:10.00+01:00
+
+null# 
+my_undefined: null
+
+#Lists
+my_list: ['a', 'b', 'c']
+my_list:
+  - a
+  - b
+  - c
+- name: Confirm that the second list element is "b"
+  assert:
+    that:
+      - my_list[1] == 'b'  
+
+#Dict
+my_dict: { a: 1, b: 2, c: 3 }
+my_dict:
+ a: 1
+ b: 2
+ c: 3
+ 
+assert:
+  that:
+    - my_dict['b'] == '2'
+    
+#Filters
+{{ var | string }}
+{{ var | capitalize }}
+{{ var | unique | sort }}
+{{ var | mandatory }}
+{{ var | default(default_value, True) }}
+{{ var | ipaddr }}
+
+#Other filters
+sum
+length 
+first 
+last 
+random 
+reverse 
+flatten 
+hash('sha1')
+password_hash('sha512')
+difference
+dict2items items2dict 
+b64encode 
+lower, upper, or capitalize
+replace('a','b') 
+regex_search('ar\S*r')
+json_query('[*].var')
+to_json
+
+
+#Lookup
+
+"{{ lookup('dig', 'example.com', 'qtype=MX') }}"
+"{{ lookup('dig', ansible_facts['hostname'] ) | ipaddr('private') }}"
+ipaddr('revdns')
+ipaddr('net')
+ipaddr(net_mask)
+ipaddr(cidr)
+ipaddr(cidr)
+
+### Task controlling
+# Rolling updates
+- name: task
+  hosts: servers
+  serial: 25%
+or
+  serial: 2
+
+run_once: yes
+
+### Smart snips
+
+#Smoke test
+  - name: Check HTTP 200 OK
+      uri:
+        url: "http://{{ inventory_hostname }}:{{ apache_port }}"
+        status_code: 200
+      delegate_to: "{{ groups['lb_servers'][0] }}"
+      become: no
+      
+#Cookie test
+- name: Get an entity and set a Cookie
+  uri:
+    url: https://example.com/entity/1
+    method: GET
+    headers:
+      Cookie: type=TEST
+
+#Login form      
+- name: Login to a form-based webpage
+  uri:
+    url: https://example.com/login.php
+    method: POST
+    body_format: form-urlencoded
+    body:
+      name: username
+      password: pw
+      enter: Sign in      
+      
+# Gitlab
+    - name: Use GitLab API to get user data
+      uri:
+        url: https://github.com/api/v4/users/
+        method: GET
+        headers:
+          Private-Token: "{{ token }}"
+        return_content: yes
+      register: gitlab_api_result
+
+    - name: Print user names
+      debug:
+        msg: A valid username is {{ item['username'] }}
+      loop: "{{ gitlab_api_result['json'] }}"
+
+
+
+#Linting
+ ansible-lint -R ~/ansible-lint/rules/ playbook.yml
+ #Default path
+ ${PYTHON_PATH}/site-packages/ansiblelint/rules/
